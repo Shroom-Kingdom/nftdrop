@@ -1,4 +1,4 @@
-import Image from "next/image";
+// import Image from "next/image";
 import React, { FC, MouseEventHandler } from "react";
 
 import Button from "./button";
@@ -22,7 +22,7 @@ const Nft: FC<{
       }
     `}</style>
     <div className="nft-select">
-      <Image src={imgSrc} width={180} height={240} alt={alt} />
+      <img src={imgSrc} width={180} height={240} alt={alt} />
       <div style={{ marginTop: "1rem" }} />
       <Button disabled={!canClaim} onClick={claim}>
         Claim now
