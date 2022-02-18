@@ -1,18 +1,17 @@
 import React, { FC, MouseEventHandler } from "react";
 
-const Button: FC<{ onClick?: MouseEventHandler<HTMLButtonElement> }> = ({
-  onClick,
-  children,
-}) => {
+const Button: FC<{
+  disabled?: boolean;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}> = ({ disabled, onClick, children }) => {
   return (
     <>
       <style jsx>{`
         .button {
-          align-self: flex-start;
           color: #fff;
           text-shadow: none;
           box-shadow: 0 0 0 0 rgba(34, 36, 38, 0.15) inset;
-          cursor: pointer;
+          cursor: ${disabled ? "default" : "pointer"};
           display: inline-block;
           min-height: 1em;
           outline: 0;
@@ -35,14 +34,14 @@ const Button: FC<{ onClick?: MouseEventHandler<HTMLButtonElement> }> = ({
             -webkit-box-shadow 0.1s ease;
         }
         .button:not(:hover) {
-          background-color: #1678c2;
+          background-color: ${disabled ? "grey" : "#1678c2"};
         }
         .button:hover {
-          background-color: #2185d0;
+          background-color: ${disabled ? "grey" : "#2185d0"};
         }
       `}</style>
 
-      <button className="button" onClick={onClick}>
+      <button className={"button"} onClick={onClick}>
         {children}
       </button>
     </>

@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 
 import Description from "../src/description.mdx";
 import Faq from "../src/faq.mdx";
-import Linkdrop from "../src/linkdrop";
+import Nftdrop from "../src/nftdrop";
 
 const Home: NextPage = () => {
   return (
@@ -88,27 +88,27 @@ const Home: NextPage = () => {
 
       <div className="container">
         <Head>
-          <title>Shroom Kingdom Linkdrop</title>
+          <title>Shroom Kingdom NFT Drop</title>
           <meta
             name="description"
-            content="Shroom Kingdom Linkdrop campaign to onboard web2 users"
+            content="Shroom Kingdom NFT Drop campaign. Get your free NFT by following our socials."
           />
           <link rel="icon" href="/favicon.ico" />
           <script
             defer
-            data-domain="linkdrop.shroomkingdom.net"
+            data-domain="nftdrop.shroomkingdom.net"
             src="https://plausible.io/js/plausible.js"
           ></script>
         </Head>
 
         <main className="main">
-          <h1 className="title">Shroom Kingdom Linkdrop</h1>
+          <h1 className="title">Shroom Kingdom NFT Drop</h1>
 
           <div className="text-block">
             <Description />
           </div>
 
-          <Linkdrop />
+          <Nftdrop />
 
           <div className="text-block">
             <Faq />

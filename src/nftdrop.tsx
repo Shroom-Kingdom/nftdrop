@@ -5,12 +5,14 @@ import Error from "../public/error.svg";
 
 import Claim, { ClaimCheck } from "./claim";
 import DiscordAccount from "./discord-account";
+import NearAccount from "./near-account";
 import TwitterAccount from "./twitter-account";
 import { DiscordUser } from "./discord";
 import { TwitterUser } from "./twitter";
 
-const Linkdrop: FC = () => {
+const Nftdrop: FC = () => {
   const [claimCheck, setClaimCheck] = useState<ClaimCheck | null>(null);
+  const [nearAccount, setNearAccount] = useState<string | null>(null);
   const [discordAccount, setDiscordAccount] = useState<DiscordUser | null>(
     null
   );
@@ -19,7 +21,7 @@ const Linkdrop: FC = () => {
   );
   const [twitterError, setTwitterError] = useState<string | null>(null);
 
-  const dateThreshold = new Date("2021-12-01");
+  const dateThreshold = new Date("2022-02-15");
 
   return (
     <div className="grid">
@@ -73,6 +75,7 @@ const Linkdrop: FC = () => {
         .card-content {
           display: flex;
           flex-direction: column;
+          align-items: flex-start;
           justify-content: space-around;
           width: 100%;
         }
@@ -110,13 +113,15 @@ const Linkdrop: FC = () => {
       <div className="card">
         <h1 className="card-header">Claim your reward</h1>
         <div className="card-row">
+          <div className="card-image">
+            {nearAccount != null ? <Check /> : <Error />}
+          </div>
           <div className="card-content">
-            <Claim
-              claimCheck={claimCheck}
-              setClaimCheck={setClaimCheck}
-              discordOwnerId={discordAccount?.id}
-              twitterOwnerId={twitterAccount?.screenName}
-            />
+            {nearAccount == null ? (
+              <>You are not logged in with NEAR</>
+            ) : (
+              <>You are logged in as {nearAccount}</>
+            )}
           </div>
         </div>
         <div className="card-row">
@@ -145,6 +150,29 @@ const Linkdrop: FC = () => {
             ) : (
               <>You have fulfilled all preconditions for Twitter</>
             )}
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-content">
+            <Claim
+              claimCheck={claimCheck}
+              setClaimCheck={setClaimCheck}
+              nearAccount={nearAccount}
+              discordOwnerId={discordAccount?.id}
+              twitterOwnerId={twitterAccount?.screenName}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <h1 className="card-header">Connect with Near Wallet</h1>
+        <div className="card-row">
+          <div className="card-image">
+            {nearAccount ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <NearAccount account={nearAccount} setAccount={setNearAccount} />
           </div>
         </div>
       </div>
@@ -214,45 +242,7 @@ const Linkdrop: FC = () => {
             {discordAccount?.solvedCaptcha ? <Check /> : <Error />}
           </div>
           <div className="card-content">
-            <h4>
-              Solved captcha on Shroom Kingdom Discord server. You need to do
-              this BEFORE voting for the server. Otherwise you will be
-              automatically kicked and we can no longer check, if you voted.
-            </h4>
-          </div>
-        </div>
-        <div className="card-row">
-          <div className="card-image">
-            {discordAccount?.discordsComVote ? <Check /> : <Error />}
-          </div>
-          <div className="card-content">
-            <h4>
-              Voted for our Discord server on{" "}
-              <a
-                href="https://discords.com/servers/168893527357521920"
-                target="_blank"
-                rel="noreferrer"
-              >
-                discords.com
-              </a>
-            </h4>
-          </div>
-        </div>
-        <div className="card-row">
-          <div className="card-image">
-            {discordAccount?.topGgVote ? <Check /> : <Error />}
-          </div>
-          <div className="card-content">
-            <h4>
-              Voted for our Discord server on{" "}
-              <a
-                href="https://top.gg/servers/168893527357521920"
-                target="_blank"
-                rel="noreferrer"
-              >
-                top.gg
-              </a>
-            </h4>
+            <h4>Solved captcha on Shroom Kingdom Discord server</h4>
           </div>
         </div>
       </div>
@@ -390,4 +380,4 @@ const Linkdrop: FC = () => {
     </div>
   );
 };
-export default Linkdrop;
+export default Nftdrop;

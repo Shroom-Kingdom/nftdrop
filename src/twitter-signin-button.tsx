@@ -12,7 +12,7 @@ const TwitterSigninButton: FC<{
       signOut();
     } else {
       const res = await fetch(
-        "https://linkdrop.shrm.workers.dev/twitter/request-token"
+        "https://nftdrop.shrm.workers.dev/twitter/request-token"
       );
       const location = await res.text();
       if (!location) {

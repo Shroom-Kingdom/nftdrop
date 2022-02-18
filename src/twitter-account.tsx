@@ -24,7 +24,7 @@ const TwitterAccount: FC<{
           const oauthVerifier = queryParams.get("oauth_verifier");
           if (oauthToken && oauthVerifier) {
             const res = await fetch(
-              `https://linkdrop.shrm.workers.dev/twitter/access-token`,
+              `https://nftdrop.shrm.workers.dev/twitter/access-token`,
               {
                 method: "POST",
                 body: JSON.stringify({ oauthToken, oauthVerifier }),
@@ -56,7 +56,7 @@ const TwitterAccount: FC<{
         }
         if (oauthToken && oauthTokenSecret) {
           const res = await fetch(
-            `https://linkdrop.shrm.workers.dev/twitter/verify`,
+            `https://nftdrop.shrm.workers.dev/twitter/verify`,
             {
               method: "POST",
               body: JSON.stringify({ oauthToken, oauthTokenSecret }),

@@ -8,6 +8,4 @@ export interface DiscordUser {
   verified: boolean;
   acceptedRules: boolean;
   solvedCaptcha: boolean;
-  discordsComVote: boolean;
-  topGgVote: boolean;
 }
