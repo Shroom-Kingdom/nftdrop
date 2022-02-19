@@ -4,6 +4,7 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
+  useState,
 } from "react";
 
 import Nft from "./nft";
@@ -12,6 +13,24 @@ export interface ClaimCheck {
   discord: boolean;
   twitter: boolean;
   tokenId?: string;
+}
+
+enum NftType {
+  Smb1Small = "smb1-small",
+  Smb1Big = "smb1-big",
+  Smb3Small = "smb3-small",
+  Smb3Big = "smb3-big",
+  SmwSmall = "smw-small",
+  SmwBig = "smw-big",
+}
+
+interface AvailableNfts {
+  [NftType.Smb1Small]: number;
+  [NftType.Smb1Big]: number;
+  [NftType.Smb3Small]: number;
+  [NftType.Smb3Big]: number;
+  [NftType.SmwSmall]: number;
+  [NftType.SmwBig]: number;
 }
 
 const Claim: FC<{
@@ -27,6 +46,10 @@ const Claim: FC<{
   discordOwnerId,
   twitterOwnerId,
 }) => {
+  const [availableNfts, setAvailableNfts] = useState<AvailableNfts | null>(
+    null
+  );
+
   const fetchCheck = useCallback(async () => {
     const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/check", {
       method: "POST",
@@ -41,6 +64,15 @@ const Claim: FC<{
     }
     setClaimCheck(await res.json());
   }, [setClaimCheck, discordOwnerId, twitterOwnerId]);
+
+  const infoCheck = useCallback(async () => {
+    const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/info");
+    if (!res.ok) {
+      console.error(res.status, await res.text());
+      return;
+    }
+    setAvailableNfts(await res.json());
+  }, [setAvailableNfts]);
 
   const canClaim = !!(
     claimCheck &&
@@ -72,6 +104,9 @@ const Claim: FC<{
   useEffect(() => {
     fetchCheck();
   }, [fetchCheck]);
+  useEffect(() => {
+    infoCheck();
+  }, [infoCheck]);
 
   const tokenId = claimCheck?.tokenId;
 
@@ -108,44 +143,52 @@ const Claim: FC<{
             ? "You claimed NFT with ID " + tokenId
             : "You can only claim one NFT! Choose wisely"}
         </div>
-        <div className="nft-wrapper">
-          <Nft
-            imgSrc="/near-chan-smw-big.png"
-            alt="near-chan-smw-big"
-            claim={claim("smw-big")}
-            canClaim={canClaim}
-          />
-          <Nft
-            imgSrc="/near-chan-smw-small.png"
-            alt="near-chan-smw-small"
-            claim={claim("smw-small")}
-            canClaim={canClaim}
-          />
-          <Nft
-            imgSrc="/near-chan-smb3-big.png"
-            alt="near-chan-smb3-big"
-            claim={claim("smb3-big")}
-            canClaim={canClaim}
-          />
-          <Nft
-            imgSrc="/near-chan-smb3-small.png"
-            alt="near-chan-smb3-small"
-            claim={claim("smb3-small")}
-            canClaim={canClaim}
-          />
-          <Nft
-            imgSrc="/near-chan-smb1-big.png"
-            alt="near-chan-smb1-big"
-            claim={claim("smb1-big")}
-            canClaim={canClaim}
-          />
-          <Nft
-            imgSrc="/near-chan-smb1-small.png"
-            alt="near-chan-smb1-small"
-            claim={claim("smb1-small")}
-            canClaim={canClaim}
-          />
-        </div>
+        {availableNfts && (
+          <div className="nft-wrapper">
+            <Nft
+              imgSrc="/near-chan-smw-big.png"
+              alt="near-chan-smw-big"
+              claim={claim("smw-big")}
+              canClaim={canClaim}
+              unclaimed={availableNfts[NftType.SmwBig]}
+            />
+            <Nft
+              imgSrc="/near-chan-smw-small.png"
+              alt="near-chan-smw-small"
+              claim={claim("smw-small")}
+              canClaim={canClaim}
+              unclaimed={availableNfts[NftType.SmwSmall]}
+            />
+            <Nft
+              imgSrc="/near-chan-smb3-big.png"
+              alt="near-chan-smb3-big"
+              claim={claim("smb3-big")}
+              canClaim={canClaim}
+              unclaimed={availableNfts[NftType.Smb3Big]}
+            />
+            <Nft
+              imgSrc="/near-chan-smb3-small.png"
+              alt="near-chan-smb3-small"
+              claim={claim("smb3-small")}
+              canClaim={canClaim}
+              unclaimed={availableNfts[NftType.Smb3Small]}
+            />
+            <Nft
+              imgSrc="/near-chan-smb1-big.png"
+              alt="near-chan-smb1-big"
+              claim={claim("smb1-big")}
+              canClaim={canClaim}
+              unclaimed={availableNfts[NftType.Smb1Big]}
+            />
+            <Nft
+              imgSrc="/near-chan-smb1-small.png"
+              alt="near-chan-smb1-small"
+              claim={claim("smb1-small")}
+              canClaim={canClaim}
+              unclaimed={availableNfts[NftType.Smb1Small]}
+            />
+          </div>
+        )}
       </div>
     </>
   );

@@ -8,7 +8,8 @@ const Nft: FC<{
   alt: string;
   claim: MouseEventHandler<HTMLButtonElement>;
   canClaim: boolean;
-}> = ({ imgSrc, alt, claim, canClaim }) => (
+  unclaimed: number;
+}> = ({ imgSrc, alt, claim, canClaim, unclaimed }) => (
   <>
     <style jsx>{`
       .nft-select {
@@ -23,9 +24,9 @@ const Nft: FC<{
     `}</style>
     <div className="nft-select">
       <img src={imgSrc} width={180} height={240} alt={alt} />
-      <div style={{ marginTop: "1rem" }} />
-      <Button disabled={!canClaim} onClick={claim}>
-        Claim now
+      <div style={{ margin: "0.5rem 0" }}>Remaining: {unclaimed}</div>
+      <Button disabled={!canClaim || unclaimed === 0} onClick={claim}>
+        {unclaimed > 0 ? "Claim now" : "All claimed"}
       </Button>
     </div>
   </>
