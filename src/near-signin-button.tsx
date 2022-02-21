@@ -2,9 +2,10 @@ import React, { FC } from "react";
 import { WalletConnection } from "near-api-js";
 
 import Button from "./button";
+import { NearUser } from "./near";
 
 const NearSigninButton: FC<{
-  account: string | null;
+  account: NearUser | null;
   wallet: WalletConnection;
   signOut: () => void;
 }> = ({ account, wallet, signOut }) => {

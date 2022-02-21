@@ -5,14 +5,16 @@ import Error from "../public/error.svg";
 
 import Claim, { ClaimCheck } from "./claim";
 import DiscordAccount from "./discord-account";
+import ExternalLink from "./external-link";
 import NearAccount from "./near-account";
 import TwitterAccount from "./twitter-account";
 import { DiscordUser } from "./discord";
+import { NearUser } from "./near";
 import { TwitterUser } from "./twitter";
 
 const Nftdrop: FC = () => {
   const [claimCheck, setClaimCheck] = useState<ClaimCheck | null>(null);
-  const [nearAccount, setNearAccount] = useState<string | null>(null);
+  const [nearAccount, setNearAccount] = useState<NearUser | null>(null);
   const [discordAccount, setDiscordAccount] = useState<DiscordUser | null>(
     null
   );
@@ -22,6 +24,9 @@ const Nftdrop: FC = () => {
   const [twitterError, setTwitterError] = useState<string | null>(null);
 
   const dateThreshold = new Date("2022-02-15");
+  const levelPercent = nearAccount
+    ? (100 * nearAccount.creditToNextLevel) / nearAccount.requiredToNextLevel
+    : 0;
 
   return (
     <div className="grid">
@@ -36,10 +41,22 @@ const Nftdrop: FC = () => {
           width: 100%;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .grid {
             width: 100%;
             flex-direction: column;
+          }
+
+          .card {
+            padding: 1.2rem 0.6rem;
+          }
+        }
+
+        @media (min-width: 769px) {
+          .card {
+            margin-left: 1rem;
+            margin-right: 1rem;
+            padding: 1.5rem;
           }
         }
 
@@ -48,8 +65,8 @@ const Nftdrop: FC = () => {
           align-items: center;
           justify-content: center;
           flex-wrap: wrap;
-          margin: 1rem;
-          padding: 1.5rem;
+          margin-top: 1rem;
+          margin-bottom: 1rem;
           text-align: left;
           color: inherit;
           text-decoration: none;
@@ -57,8 +74,6 @@ const Nftdrop: FC = () => {
           border-radius: 10px;
           transition: color 0.15s ease, border-color 0.15s ease;
           background: rgba(0, 0, 0, 0.05);
-          max-width: 100%;
-          width: 100%;
         }
 
         .card-image {
@@ -114,13 +129,18 @@ const Nftdrop: FC = () => {
         <h1 className="card-header">Claim your reward</h1>
         <div className="card-row">
           <div className="card-image">
-            {nearAccount != null ? <Check /> : <Error />}
+            {claimCheck?.near ? <Check /> : <Error />}
           </div>
           <div className="card-content">
             {nearAccount == null ? (
               <>You are not logged in with NEAR</>
+            ) : !claimCheck?.near ? (
+              <>
+                You have not yet fulfilled all preconditions with your Near
+                wallet
+              </>
             ) : (
-              <>You are logged in as {nearAccount}</>
+              <>You have fulfilled all preconditions with your Near wallet</>
             )}
           </div>
         </div>
@@ -157,7 +177,7 @@ const Nftdrop: FC = () => {
             <Claim
               claimCheck={claimCheck}
               setClaimCheck={setClaimCheck}
-              nearAccount={nearAccount}
+              walletId={nearAccount?.walletId}
               discordOwnerId={discordAccount?.id}
               twitterOwnerId={twitterAccount?.screenName}
             />
@@ -173,6 +193,60 @@ const Nftdrop: FC = () => {
           </div>
           <div className="card-content">
             <NearAccount account={nearAccount} setAccount={setNearAccount} />
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {nearAccount?.staked ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Has staked with a validator or via{" "}
+              <a
+                href="https://metapool.app/dapp/mainnet/meta/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Metapool
+              </a>
+            </h4>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {(nearAccount?.level ?? 0) >= 3 ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Has reached level 2 on{" "}
+              <ExternalLink
+                href={
+                  nearAccount
+                    ? `https://stats.gallery/mainnet/${nearAccount.walletId}/overview`
+                    : "https://stats.gallery"
+                }
+              >
+                stats.gallery
+              </ExternalLink>{" "}
+              {nearAccount && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.9rem",
+                    height: "24px",
+                    maxWidth: "100%",
+                    borderRadius: "6px",
+                    background: `linear-gradient(to right, #1678c2 ${levelPercent}%, #bbb ${levelPercent}%)`,
+                    color: "black",
+                  }}
+                >
+                  Level: {nearAccount.level} - {nearAccount.creditToNextLevel} /{" "}
+                  {nearAccount?.requiredToNextLevel}
+                </div>
+              )}
+            </h4>
           </div>
         </div>
       </div>

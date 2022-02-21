@@ -84,14 +84,24 @@ const Home: NextPage = () => {
           max-width: 60rem;
           text-align: left;
         }
+
+        @media (max-width: 768px) {
+          .text-block {
+            line-height: 1.5;
+            font-size: 1.3rem;
+            margin: 0 0.6rem;
+            max-width: 60rem;
+            text-align: left;
+          }
+        }
       `}</style>
 
       <div className="container">
         <Head>
-          <title>Shroom Kingdom NFT Drop</title>
+          <title>Shroom Kingdom NFT Airdrop</title>
           <meta
             name="description"
-            content="Shroom Kingdom NFT Drop campaign. Get your free NFT by following our socials."
+            content="Shroom Kingdom NFT Airdrop campaign. Get your free NFT by following our socials."
           />
           <link rel="icon" href="/favicon.ico" />
           <script
@@ -102,7 +112,7 @@ const Home: NextPage = () => {
         </Head>
 
         <main className="main">
-          <h1 className="title">Shroom Kingdom NFT Drop</h1>
+          <h1 className="title">Shroom Kingdom NFT Airdrop</h1>
 
           <div className="text-block">
             <Description />

@@ -8,10 +8,11 @@ import React, {
 import { WalletConnection, connect, keyStores } from "near-api-js";
 
 import NearSigninButton from "./near-signin-button";
+import { NearUser } from "./near";
 
 const NearAccount: FC<{
-  account: string | null;
-  setAccount: Dispatch<SetStateAction<string | null>>;
+  account: NearUser | null;
+  setAccount: Dispatch<SetStateAction<NearUser | null>>;
 }> = ({ account, setAccount }) => {
   const [wallet, setWallet] = useState<WalletConnection | null>(null);
   useEffect(() => {
@@ -31,10 +32,20 @@ const NearAccount: FC<{
         const wallet = new WalletConnection(near, null);
         setWallet(wallet);
 
-        const accountId = wallet.getAccountId();
-        if (accountId) {
-          setAccount(accountId);
+        const walletId = wallet.getAccountId() as string | null;
+        if (!walletId) {
+          return;
         }
+
+        const res = await fetch(
+          `https://nftdrop.shrm.workers.dev/near/${walletId}`
+        );
+        if (!res.ok) {
+          console.error(await res.text());
+          return;
+        }
+        const user = await res.json();
+        setAccount(user);
       }
     };
     run();
@@ -46,7 +57,7 @@ const NearAccount: FC<{
   };
   return (
     <>
-      {account && <div>{account}</div>}
+      {account && <div>{account.walletId}</div>}
       {wallet && (
         <NearSigninButton account={account} wallet={wallet} signOut={signOut} />
       )}

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { AnchorHTMLAttributes } from "react";
 
-const ExternalLink: React.FC = ({ children, ...props }) => (
+const ExternalLink: React.FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
+  children,
+  ...props
+}) => (
   <a target="_blank" rel="noopener" {...props}>
     {children}
   </a>

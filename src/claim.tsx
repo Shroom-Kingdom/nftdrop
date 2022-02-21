@@ -10,6 +10,7 @@ import React, {
 import Nft from "./nft";
 
 export interface ClaimCheck {
+  near: boolean;
   discord: boolean;
   twitter: boolean;
   tokenId?: string;
@@ -36,13 +37,13 @@ interface AvailableNfts {
 const Claim: FC<{
   claimCheck: ClaimCheck | null;
   setClaimCheck: Dispatch<SetStateAction<ClaimCheck | null>>;
-  nearAccount: string | null;
+  walletId?: string;
   discordOwnerId?: string;
   twitterOwnerId?: string;
 }> = ({
   claimCheck,
   setClaimCheck,
-  nearAccount,
+  walletId,
   discordOwnerId,
   twitterOwnerId,
 }) => {
@@ -54,6 +55,7 @@ const Claim: FC<{
     const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/check", {
       method: "POST",
       body: JSON.stringify({
+        walletId,
         discordOwnerId,
         twitterOwnerId,
       }),
@@ -63,7 +65,7 @@ const Claim: FC<{
       return;
     }
     setClaimCheck(await res.json());
-  }, [setClaimCheck, discordOwnerId, twitterOwnerId]);
+  }, [setClaimCheck, walletId, discordOwnerId, twitterOwnerId]);
 
   const infoCheck = useCallback(async () => {
     const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/info");
@@ -76,10 +78,10 @@ const Claim: FC<{
 
   const canClaim = !!(
     claimCheck &&
+    claimCheck.near &&
     claimCheck.discord &&
     claimCheck.twitter &&
-    !claimCheck.tokenId &&
-    nearAccount != null
+    !claimCheck.tokenId
   );
   const claim = useCallback(
     (nft: string) => async () => {
