@@ -1,36 +1,53 @@
 import ExternalLink from "./external-link";
 
 <ExternalLink href="https://shroomkingdom.net/">Shroom Kingdom</ExternalLink> is
-an upcoming video game, which will be similar to Mario Maker, but it runs in your
-browser. It uses existing assets of the game, which have been reverse engineered
-and will be extracted, so that they can easily be loaded in the browser. The game
-is still very WIP, but I'm doing good progress.
+an upcoming video 2D platformer and building game, which runs in your browser. It
+uses existing assets of Super Mario Maker 2, which have been reverse engineered and
+will be extracted, so that they can easily be loaded in the browser. Additionally
+we will also work with artist to give a good default texture set, so that everyone
+is able to play the game. Game development is still WIP, but I'm doing good progress.
 
 Here you can see the asset extraction process, which uses an external program available for all desktop platforms.
 It decrypts a so called XCI file, which is one of the file formats for Nintendo Switch games,
 and then parses and rebundles the resulting asset file into a TAR file with extracted textures in PNG format.
 
 <div style={{ display: "flex", justifyContent: "center" }}>
-  <img
+  <video
     style={{ width: "600px", maxWidth: "100%" }}
-    src="shroom-kingdom.gif"
-    alt="asset extraction"
-  ></img>
+    src="asset-extraction.mp4"
+    controls
+    muted
+    preload="metadata"
+  ></video>
 </div>
 
-Here is a short demonstration of some early footage of the game:
+Here are some short demonstrations of early footage gameplay:
 
 <div style={{ display: "flex", justifyContent: "center" }}>
-  <img
+  <video
     style={{ width: "600px", maxWidth: "100%" }}
-    src="shroom-kingdom-start-game.gif"
-    alt="start game"
-  ></img>
+    src="game-1.mp4"
+    controls
+    muted
+    preload="metadata"
+  ></video>
+</div>
+
+<div style={{ display: "flex", justifyContent: "center" }}>
+  <video
+    style={{ width: "600px", maxWidth: "100%" }}
+    src="game-2.mp4"
+    controls
+    muted
+    preload="metadata"
+  ></video>
 </div>
 
 What's special about the game is that there is an integration with a blockchain called <ExternalLink href="https://near.org/">NEAR Protocol</ExternalLink>.
 NEAR Protocol is a climate neutral Proof of Stake blockchain,
 which allows running WebAssembly Smart Contracts (it's like a programmable decentralized database).
 
+We are currently developing a playable <ExternalLink href="https://near-chan.github.io/">NEARchan character</ExternalLink>
+and we decided to publish some of the sprites as collectible NFTs.
 You have to complete the following tasks in order to get your NFT.
 You can only claim one NFT!
