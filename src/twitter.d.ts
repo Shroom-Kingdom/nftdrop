@@ -6,6 +6,8 @@ export interface TwitterUser {
   isFollowingHumanguild: boolean;
   isFollowingNEARGames: boolean;
   isFollowingNEARProtocol: boolean;
+  isFollowingNNC: boolean;
+  isFollowingFSC: boolean;
   retweeted: boolean;
   liked: boolean;
 }

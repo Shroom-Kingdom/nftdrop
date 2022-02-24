@@ -106,6 +106,15 @@ const Nftdrop: FC = () => {
           margin-top: 0;
         }
 
+        .card-section {
+          width: 100%;
+          color: black;
+          display: flex;
+          justify-content: center;
+          border-top: 2px dashed black;
+          border-bottom: 2px dashed black;
+        }
+
         .card:hover,
         .card:focus,
         .card:active {
@@ -215,13 +224,9 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Has staked with a validator or via{" "}
-              <a
-                href="https://metapool.app/dapp/mainnet/meta/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <ExternalLink href="https://metapool.app/dapp/mainnet/meta/">
                 Metapool
-              </a>
+              </ExternalLink>
             </h4>
           </div>
         </div>
@@ -298,13 +303,9 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Has joined{" "}
-              <a
-                href="https://discord.gg/DYpNr4cHxE"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <ExternalLink href="https://discord.gg/DYpNr4cHxE">
                 Shroom Kingdom Discord server
-              </a>
+              </ExternalLink>
             </h4>
           </div>
         </div>
@@ -359,64 +360,9 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Is following{" "}
-              <a
-                href="https://twitter.com/shrm_kingdom"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <ExternalLink href="https://twitter.com/shrm_kingdom">
                 Shroom Kingdom
-              </a>
-            </h4>
-          </div>
-        </div>
-        <div className="card-row">
-          <div className="card-image">
-            {twitterAccount?.isFollowingHumanguild ? <Check /> : <Error />}
-          </div>
-          <div className="card-content">
-            <h4>
-              Is following{" "}
-              <a
-                href="https://twitter.com/humanguild"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Humanguild
-              </a>
-            </h4>
-          </div>
-        </div>
-        <div className="card-row">
-          <div className="card-image">
-            {twitterAccount?.isFollowingNEARGames ? <Check /> : <Error />}
-          </div>
-          <div className="card-content">
-            <h4>
-              Is following{" "}
-              <a
-                href="https://twitter.com/NearGamesGuild"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Near Games
-              </a>
-            </h4>
-          </div>
-        </div>
-        <div className="card-row">
-          <div className="card-image">
-            {twitterAccount?.isFollowingNEARProtocol ? <Check /> : <Error />}
-          </div>
-          <div className="card-content">
-            <h4>
-              Is following{" "}
-              <a
-                href="https://twitter.com/NEARProtocol"
-                target="_blank"
-                rel="noreferrer"
-              >
-                NEAR Protocol
-              </a>
+              </ExternalLink>
             </h4>
           </div>
         </div>
@@ -435,14 +381,10 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Retweeted{" "}
-              <a
-                href="https://twitter.com/shrm_kingdom/status/1468678836632133638"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <ExternalLink href="https://twitter.com/shrm_kingdom/status/1468678836632133638">
                 our Tweet
-              </a>{" "}
-              with hashtags #NFT #PlayToEarn #BlockchainGaming
+              </ExternalLink>{" "}
+              with hashtags #NFT #PlayToEarn #BlockchainGaming #Airdrop
             </h4>
           </div>
         </div>
@@ -453,13 +395,84 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Liked{" "}
-              <a
-                href="https://twitter.com/shrm_kingdom/status/1468678836632133638"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <ExternalLink href="https://twitter.com/shrm_kingdom/status/1468678836632133638">
                 our Tweet
-              </a>
+              </ExternalLink>
+            </h4>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-section">
+            <h3>Follow Near Gaming</h3>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {twitterAccount?.isFollowingHumanguild ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Is following{" "}
+              <ExternalLink href="https://twitter.com/humanguild">
+                Humanguild
+              </ExternalLink>
+            </h4>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {twitterAccount?.isFollowingNEARGames ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Is following{" "}
+              <ExternalLink href="https://twitter.com/NearGamesGuild">
+                Near Games
+              </ExternalLink>
+            </h4>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {twitterAccount?.isFollowingNEARProtocol ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Is following{" "}
+              <ExternalLink href="https://twitter.com/NEARProtocol">
+                NEAR Protocol
+              </ExternalLink>
+            </h4>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-section">
+            <h3>Follow Shroom Kingdom Partners</h3>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {twitterAccount?.isFollowingNNC ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Is following{" "}
+              <ExternalLink href="https://twitter.com/NearNft">
+                NEAR NFT Club
+              </ExternalLink>
+            </h4>
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
+            {twitterAccount?.isFollowingFSC ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Is following{" "}
+              <ExternalLink href="https://twitter.com/near_fsc">
+                Friendlyseacreatures
+              </ExternalLink>
             </h4>
           </div>
         </div>
