@@ -197,6 +197,19 @@ const Nftdrop: FC = () => {
         </div>
         <div className="card-row">
           <div className="card-image">
+            {nearAccount?.createdAt || 0 > dateThreshold.valueOf() ? (
+              <Check />
+            ) : (
+              <Error />
+            )}
+          </div>
+          <div className="card-content">
+            <h4>Account created before {dateThreshold.toLocaleString()}?</h4>
+            {nearAccount && nearAccount?.createdAt.toLocaleString()}
+          </div>
+        </div>
+        <div className="card-row">
+          <div className="card-image">
             {nearAccount?.staked ? <Check /> : <Error />}
           </div>
           <div className="card-content">
@@ -218,7 +231,7 @@ const Nftdrop: FC = () => {
           </div>
           <div className="card-content">
             <h4>
-              Has reached level 2 on{" "}
+              Has reached level 3 on{" "}
               <ExternalLink
                 href={
                   nearAccount

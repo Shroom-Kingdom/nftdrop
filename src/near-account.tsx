@@ -45,6 +45,7 @@ const NearAccount: FC<{
           return;
         }
         const user = await res.json();
+        user.createdAt = new Date(user.createdAt);
         setAccount(user);
       }
     };

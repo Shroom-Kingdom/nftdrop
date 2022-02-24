@@ -5,4 +5,5 @@ export interface NearUser {
   staked: boolean;
   creditToNextLevel: number;
   requiredToNextLevel: number;
+  createdAt: Date;
 }
