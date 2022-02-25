@@ -3,6 +3,12 @@ import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 import DiscordSigninButton from "./discord-signin-button";
 import { DiscordUser } from "./discord";
 import { removeQueryParams } from "./helper";
+import {
+  DiscordSession,
+  SessionHeader,
+  SessionStorageKey,
+  getDiscordSessionHeader,
+} from "./session";
 
 const DiscordAccount: FC<{
   account: DiscordUser | null;
@@ -11,8 +17,8 @@ const DiscordAccount: FC<{
   useEffect(() => {
     const run = async () => {
       if (process.browser) {
-        const refreshToken = window.localStorage.getItem(
-          "DISCORD_REFRESH_TOKEN"
+        const discordSession = window.localStorage.getItem(
+          SessionStorageKey.Discord
         );
         if (window.location.search.startsWith("?")) {
           const queryParams = new URLSearchParams(
@@ -34,30 +40,39 @@ const DiscordAccount: FC<{
               return;
             }
             const user = await res.json();
-            signIn(user);
+            const session = getDiscordSessionHeader(res);
+            if (!session) return;
+            signIn(user, session);
             return;
           }
         }
-        if (refreshToken) {
+        if (discordSession) {
           const res = await fetch(
             `https://nftdrop.shrm.workers.dev/discord/refresh`,
             {
               method: "POST",
-              body: JSON.stringify({ refresh_token: refreshToken }),
+              headers: {
+                [SessionHeader.Discord]: discordSession,
+              },
             }
           );
           if (!res.ok) {
-            window.localStorage.removeItem("DISCORD_REFRESH_TOKEN");
+            signOut();
             console.error(await res.text());
             return;
           }
           const user = await res.json();
-          signIn(user);
+          const session = getDiscordSessionHeader(res);
+          if (!session) return;
+          signIn(user, session);
         }
       }
     };
-    const signIn = (user: DiscordUser) => {
-      window.localStorage.setItem("DISCORD_REFRESH_TOKEN", user.refreshToken);
+    const signIn = (user: DiscordUser, session: DiscordSession) => {
+      window.localStorage.setItem(
+        SessionStorageKey.Discord,
+        encodeURIComponent(JSON.stringify(session))
+      );
       user.createdAt = new Date(user.createdAt);
       setAccount(user);
     };
@@ -65,7 +80,7 @@ const DiscordAccount: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const signOut = () => {
-    window.localStorage.removeItem("DISCORD_REFRESH_TOKEN");
+    window.localStorage.removeItem(SessionStorageKey.Discord);
     setAccount(null);
   };
   return (

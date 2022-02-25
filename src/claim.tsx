@@ -6,14 +6,20 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Contract, WalletConnection } from "near-api-js";
 
+import Button from "./button";
 import Nft from "./nft";
+import { useDebounceCallback } from "./helper";
+import { SessionHeader, SessionStorageKey } from "./session";
 
 export interface ClaimCheck {
   near: boolean;
   discord: boolean;
   twitter: boolean;
   tokenId?: string;
+  approvalId?: number;
+  imgSrc?: string;
 }
 
 enum NftType {
@@ -37,12 +43,14 @@ interface AvailableNfts {
 const Claim: FC<{
   claimCheck: ClaimCheck | null;
   setClaimCheck: Dispatch<SetStateAction<ClaimCheck | null>>;
+  wallet: WalletConnection | null;
   walletId?: string;
   discordOwnerId?: string;
   twitterOwnerId?: string;
 }> = ({
   claimCheck,
   setClaimCheck,
+  wallet,
   walletId,
   discordOwnerId,
   twitterOwnerId,
@@ -51,21 +59,28 @@ const Claim: FC<{
     null
   );
 
-  const fetchCheck = useCallback(async () => {
-    const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/check", {
-      method: "POST",
-      body: JSON.stringify({
-        walletId,
-        discordOwnerId,
-        twitterOwnerId,
-      }),
-    });
-    if (!res.ok) {
-      console.error(res.status, await res.text());
-      return;
-    }
-    setClaimCheck(await res.json());
-  }, [setClaimCheck, walletId, discordOwnerId, twitterOwnerId]);
+  const fetchCheck = useDebounceCallback(
+    async () => {
+      const res = await fetch(
+        "https://nftdrop.shrm.workers.dev/nftdrop/check",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            walletId,
+            discordOwnerId,
+            twitterOwnerId,
+          }),
+        }
+      );
+      if (!res.ok) {
+        console.error(res.status, await res.text());
+        return;
+      }
+      setClaimCheck(await res.json());
+    },
+    1000,
+    [setClaimCheck, walletId, discordOwnerId, twitterOwnerId]
+  );
 
   const infoCheck = useCallback(async () => {
     const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/info");
@@ -81,26 +96,81 @@ const Claim: FC<{
     claimCheck.near &&
     claimCheck.discord &&
     claimCheck.twitter &&
-    !claimCheck.tokenId
+    claimCheck.tokenId == null &&
+    claimCheck.approvalId == null
   );
+
+  const transferNFT = useCallback(
+    (tokenId: string, approvalId: number) => async () => {
+      console.log("transferNFT", tokenId, approvalId, walletId);
+      if (!wallet || !walletId) return;
+      const contract = new Contract(
+        wallet.account(),
+        "near-chan-v5.shrm.testnet",
+        {
+          viewMethods: [],
+          changeMethods: ["nft_transfer"],
+        }
+      );
+      console.log({
+        args: {
+          receiver_id: walletId,
+          token_id: tokenId,
+          approval_id: approvalId,
+        },
+        amount: "1",
+      });
+      // FIXME typings
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (contract as any).nft_transfer({
+        args: {
+          receiver_id: walletId,
+          token_id: tokenId,
+          approval_id: approvalId,
+        },
+        amount: "1",
+      });
+    },
+    [wallet, walletId]
+  );
+
   const claim = useCallback(
-    (nft: string) => async () => {
-      if (!discordOwnerId || !twitterOwnerId || !canClaim) return;
+    (nft: NftType) => async () => {
+      const twitterSession = window.localStorage.getItem(
+        SessionStorageKey.Twitter
+      );
+      const discordSession = window.localStorage.getItem(
+        SessionStorageKey.Discord
+      );
+      if (!twitterSession || !discordSession || !canClaim) return;
       const res = await fetch(
         "https://nftdrop.shrm.workers.dev/nftdrop/claim",
         {
           method: "POST",
-          body: JSON.stringify({ discordOwnerId, twitterOwnerId, nft }),
+          body: JSON.stringify({ walletId, nft }),
+          headers: {
+            [SessionHeader.Discord]: discordSession,
+            [SessionHeader.Twitter]: twitterSession,
+          },
         }
       );
       if (!res.ok) {
         console.error(res.status, await res.text());
         return;
       }
-      const tokenId = await res.text();
-      setClaimCheck({ ...claimCheck, tokenId });
+
+      const {
+        tokenId,
+        approvalId,
+        imgSrc,
+      }: { tokenId: string; approvalId: number; imgSrc: string } =
+        await res.json();
+
+      await transferNFT(tokenId, approvalId)();
+
+      setClaimCheck({ ...claimCheck, tokenId, approvalId, imgSrc });
     },
-    [discordOwnerId, twitterOwnerId, claimCheck, canClaim, setClaimCheck]
+    [canClaim, walletId, transferNFT, setClaimCheck, claimCheck]
   );
 
   useEffect(() => {
@@ -111,6 +181,7 @@ const Claim: FC<{
   }, [infoCheck]);
 
   const tokenId = claimCheck?.tokenId;
+  const approvalId = claimCheck?.approvalId;
 
   return (
     <>
@@ -140,56 +211,84 @@ const Claim: FC<{
         }
       `}</style>
       <div className="wrapper">
-        <div>
-          {tokenId
-            ? "You claimed NFT with ID " + tokenId
-            : "You can only claim one NFT! Choose wisely"}
-        </div>
-        {availableNfts && (
-          <div className="nft-wrapper">
-            <Nft
-              imgSrc="/near-chan-smw-big.png"
-              alt="near-chan-smw-big"
-              claim={claim("smw-big")}
-              canClaim={canClaim}
-              unclaimed={availableNfts[NftType.SmwBig]}
-            />
-            <Nft
-              imgSrc="/near-chan-smw-small.png"
-              alt="near-chan-smw-small"
-              claim={claim("smw-small")}
-              canClaim={canClaim}
-              unclaimed={availableNfts[NftType.SmwSmall]}
-            />
-            <Nft
-              imgSrc="/near-chan-smb3-big.png"
-              alt="near-chan-smb3-big"
-              claim={claim("smb3-big")}
-              canClaim={canClaim}
-              unclaimed={availableNfts[NftType.Smb3Big]}
-            />
-            <Nft
-              imgSrc="/near-chan-smb3-small.png"
-              alt="near-chan-smb3-small"
-              claim={claim("smb3-small")}
-              canClaim={canClaim}
-              unclaimed={availableNfts[NftType.Smb3Small]}
-            />
-            <Nft
-              imgSrc="/near-chan-smb1-big.png"
-              alt="near-chan-smb1-big"
-              claim={claim("smb1-big")}
-              canClaim={canClaim}
-              unclaimed={availableNfts[NftType.Smb1Big]}
-            />
-            <Nft
-              imgSrc="/near-chan-smb1-small.png"
-              alt="near-chan-smb1-small"
-              claim={claim("smb1-small")}
-              canClaim={canClaim}
-              unclaimed={availableNfts[NftType.Smb1Small]}
-            />
-          </div>
+        {tokenId != null ? (
+          <>
+            <div className="nft-wrapper">
+              <Nft imgSrc={claimCheck?.imgSrc ?? ""} alt="near-chan-smw-big">
+                <div>You claimed NFT with ID {tokenId}</div>
+                {approvalId != null && (
+                  <>
+                    <b>You have not yet transferred it to your wallet!</b>
+                    <Button onClick={transferNFT(tokenId, approvalId)}>
+                      Transfer
+                    </Button>
+                  </>
+                )}
+              </Nft>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>You can only claim one NFT! Choose wisely</div>
+            {availableNfts && (
+              <div className="nft-wrapper">
+                <Nft
+                  imgSrc="/near-chan-smw-big.png"
+                  alt="near-chan-smw-big"
+                  claimOptions={{
+                    claim: claim(NftType.SmwBig),
+                    canClaim,
+                    unclaimed: availableNfts[NftType.SmwBig],
+                  }}
+                />
+                <Nft
+                  imgSrc="/near-chan-smw-small.png"
+                  alt="near-chan-smw-small"
+                  claimOptions={{
+                    claim: claim(NftType.SmwSmall),
+                    canClaim,
+                    unclaimed: availableNfts[NftType.SmwSmall],
+                  }}
+                />
+                <Nft
+                  imgSrc="/near-chan-smb3-big.png"
+                  alt="near-chan-smb3-big"
+                  claimOptions={{
+                    claim: claim(NftType.Smb3Big),
+                    canClaim,
+                    unclaimed: availableNfts[NftType.Smb3Big],
+                  }}
+                />
+                <Nft
+                  imgSrc="/near-chan-smb3-small.png"
+                  alt="near-chan-smb3-small"
+                  claimOptions={{
+                    claim: claim(NftType.Smb3Small),
+                    canClaim,
+                    unclaimed: availableNfts[NftType.Smb3Small],
+                  }}
+                />
+                <Nft
+                  imgSrc="/near-chan-smb1-big.png"
+                  alt="near-chan-smb1-big"
+                  claimOptions={{
+                    claim: claim(NftType.Smb1Big),
+                    canClaim,
+                    unclaimed: availableNfts[NftType.Smb1Big],
+                  }}
+                />
+                <Nft
+                  imgSrc="/near-chan-smb1-small.png"
+                  alt="near-chan-smb1-small"
+                  claimOptions={{
+                    claim: claim(NftType.Smb1Small),
+                    canClaim,
+                    unclaimed: availableNfts[NftType.Smb1Small],
+                  }}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

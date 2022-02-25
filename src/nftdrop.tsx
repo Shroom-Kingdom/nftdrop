@@ -1,4 +1,5 @@
 import React, { FC, useState } from "react";
+import { WalletConnection } from "near-api-js";
 
 import Check from "../public/check.svg";
 import Error from "../public/error.svg";
@@ -15,6 +16,7 @@ import { TwitterUser } from "./twitter";
 const Nftdrop: FC = () => {
   const [claimCheck, setClaimCheck] = useState<ClaimCheck | null>(null);
   const [nearAccount, setNearAccount] = useState<NearUser | null>(null);
+  const [wallet, setWallet] = useState<WalletConnection | null>(null);
   const [discordAccount, setDiscordAccount] = useState<DiscordUser | null>(
     null
   );
@@ -186,6 +188,7 @@ const Nftdrop: FC = () => {
             <Claim
               claimCheck={claimCheck}
               setClaimCheck={setClaimCheck}
+              wallet={wallet}
               walletId={nearAccount?.walletId}
               discordOwnerId={discordAccount?.id}
               twitterOwnerId={twitterAccount?.screenName}
@@ -201,7 +204,12 @@ const Nftdrop: FC = () => {
             {nearAccount ? <Check /> : <Error />}
           </div>
           <div className="card-content">
-            <NearAccount account={nearAccount} setAccount={setNearAccount} />
+            <NearAccount
+              account={nearAccount}
+              setAccount={setNearAccount}
+              wallet={wallet}
+              setWallet={setWallet}
+            />
           </div>
         </div>
         <div className="card-row">

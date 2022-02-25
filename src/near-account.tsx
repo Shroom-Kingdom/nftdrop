@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 import { WalletConnection, connect, keyStores } from "near-api-js";
 
 import NearSigninButton from "./near-signin-button";
@@ -13,8 +7,9 @@ import { NearUser } from "./near";
 const NearAccount: FC<{
   account: NearUser | null;
   setAccount: Dispatch<SetStateAction<NearUser | null>>;
-}> = ({ account, setAccount }) => {
-  const [wallet, setWallet] = useState<WalletConnection | null>(null);
+  wallet: WalletConnection | null;
+  setWallet: Dispatch<SetStateAction<WalletConnection | null>>;
+}> = ({ account, setAccount, wallet, setWallet }) => {
   useEffect(() => {
     const run = async () => {
       if (process.browser) {
@@ -50,7 +45,7 @@ const NearAccount: FC<{
       }
     };
     run();
-  }, [setAccount]);
+  }, [setAccount, setWallet]);
   const signOut = () => {
     if (!wallet) return;
     wallet.signOut();

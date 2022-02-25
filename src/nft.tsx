@@ -6,10 +6,12 @@ import Button from "./button";
 const Nft: FC<{
   imgSrc: string;
   alt: string;
-  claim: MouseEventHandler<HTMLButtonElement>;
-  canClaim: boolean;
-  unclaimed: number;
-}> = ({ imgSrc, alt, claim, canClaim, unclaimed }) => (
+  claimOptions?: {
+    claim: MouseEventHandler<HTMLButtonElement>;
+    canClaim: boolean;
+    unclaimed: number;
+  };
+}> = ({ imgSrc, alt, claimOptions, children }) => (
   <>
     <style jsx>{`
       .nft-select {
@@ -24,10 +26,31 @@ const Nft: FC<{
     `}</style>
     <div className="nft-select">
       <img src={imgSrc} width={180} height={240} alt={alt} />
-      <div style={{ margin: "0.5rem 0" }}>Remaining: {unclaimed}</div>
-      <Button disabled={!canClaim || unclaimed === 0} onClick={claim}>
-        {unclaimed > 0 ? "Claim now" : "All claimed"}
-      </Button>
+      {claimOptions && (
+        <>
+          <div style={{ margin: "0.5rem 0" }}>
+            Remaining: {claimOptions.unclaimed}
+          </div>
+          <Button
+            disabled={!claimOptions.canClaim || claimOptions.unclaimed === 0}
+            onClick={claimOptions.claim}
+          >
+            {claimOptions.unclaimed ?? 0 > 0 ? "Claim now" : "All claimed"}
+          </Button>
+        </>
+      )}
+      {children && (
+        <div
+          style={{
+            margin: "0.5rem 0",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {children}
+        </div>
+      )}
     </div>
   </>
 );

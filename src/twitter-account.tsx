@@ -3,6 +3,11 @@ import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 import TwitterSigninButton from "./twitter-signin-button";
 import { removeQueryParams } from "./helper";
 import { TwitterUser } from "./twitter";
+import {
+  SessionHeader,
+  SessionStorageKey,
+  getTwitterSessionHeader,
+} from "./session";
 
 const TwitterAccount: FC<{
   account: TwitterUser | null;
@@ -12,9 +17,8 @@ const TwitterAccount: FC<{
   useEffect(() => {
     const run = async () => {
       if (process.browser) {
-        const oauthToken = window.localStorage.getItem("TWITTER_OAUTH_TOKEN");
-        const oauthTokenSecret = window.localStorage.getItem(
-          "TWITTER_OAUTH_TOKEN_SECRET"
+        const twitterSession = window.localStorage.getItem(
+          SessionStorageKey.Twitter
         );
         if (window.location.search.startsWith("?")) {
           const queryParams = new URLSearchParams(
@@ -36,30 +40,25 @@ const TwitterAccount: FC<{
               console.error(await res.text());
               return;
             }
-            const user: TwitterUser & {
-              oauthToken?: string;
-              oauthTokenSecret?: string;
-            } = await res.json();
-            const { oauthToken: token, oauthTokenSecret: secret } = user;
-            delete user.oauthToken;
-            delete user.oauthTokenSecret;
+            const user: TwitterUser = await res.json();
             setAccount(user);
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            window.localStorage.setItem("TWITTER_OAUTH_TOKEN", token!);
+            const session = getTwitterSessionHeader(res);
+            if (!session) return;
             window.localStorage.setItem(
-              "TWITTER_OAUTH_TOKEN_SECRET",
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              secret!
+              SessionStorageKey.Twitter,
+              encodeURIComponent(JSON.stringify(session))
             );
             return;
           }
         }
-        if (oauthToken && oauthTokenSecret) {
+        if (twitterSession) {
           const res = await fetch(
             `https://nftdrop.shrm.workers.dev/twitter/verify`,
             {
               method: "POST",
-              body: JSON.stringify({ oauthToken, oauthTokenSecret }),
+              headers: {
+                [SessionHeader.Twitter]: twitterSession,
+              },
             }
           );
           removeQueryParams();
@@ -82,8 +81,7 @@ const TwitterAccount: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const signOut = () => {
-    window.localStorage.removeItem("TWITTER_OAUTH_TOKEN");
-    window.localStorage.removeItem("TWITTER_OAUTH_TOKEN_SECRET");
+    window.localStorage.removeItem(SessionStorageKey.Twitter);
     setAccount(null);
   };
   return (
