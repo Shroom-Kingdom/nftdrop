@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const Dotenv = require("dotenv-webpack");
+
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
@@ -20,6 +23,11 @@ module.exports = {
         },
       ],
     });
+    config.plugins.push(
+      new Dotenv({
+        path: process.env.NODE_ENV === "production" ? "./.env-prod" : "./.env",
+      })
+    );
 
     return config;
   },

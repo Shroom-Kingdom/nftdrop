@@ -1,6 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 
 import TwitterSigninButton from "./twitter-signin-button";
+import config from "./config";
 import { removeQueryParams } from "./helper";
 import { TwitterUser } from "./twitter";
 import {
@@ -28,7 +29,7 @@ const TwitterAccount: FC<{
           const oauthVerifier = queryParams.get("oauth_verifier");
           if (oauthToken && oauthVerifier) {
             const res = await fetch(
-              `https://nftdrop.shrm.workers.dev/twitter/access-token`,
+              `${config.baseApiUrl}/twitter/access-token`,
               {
                 method: "POST",
                 body: JSON.stringify({ oauthToken, oauthVerifier }),
@@ -52,15 +53,12 @@ const TwitterAccount: FC<{
           }
         }
         if (twitterSession) {
-          const res = await fetch(
-            `https://nftdrop.shrm.workers.dev/twitter/verify`,
-            {
-              method: "POST",
-              headers: {
-                [SessionHeader.Twitter]: twitterSession,
-              },
-            }
-          );
+          const res = await fetch(`${config.baseApiUrl}/twitter/verify`, {
+            method: "POST",
+            headers: {
+              [SessionHeader.Twitter]: twitterSession,
+            },
+          });
           removeQueryParams();
           if (!res.ok) {
             signOut();

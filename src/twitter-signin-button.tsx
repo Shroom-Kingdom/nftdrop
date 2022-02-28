@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 
 import Button from "./button";
+import config from "./config";
 import { TwitterUser } from "./twitter";
 
 const TwitterSigninButton: FC<{
@@ -11,9 +12,7 @@ const TwitterSigninButton: FC<{
     if (account) {
       signOut();
     } else {
-      const res = await fetch(
-        "https://nftdrop.shrm.workers.dev/twitter/request-token"
-      );
+      const res = await fetch(`${config.baseApiUrl}/twitter/request-token`);
       const location = await res.text();
       if (!location) {
         console.error("not a redirect");

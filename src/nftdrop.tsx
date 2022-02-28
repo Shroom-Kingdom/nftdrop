@@ -9,6 +9,7 @@ import DiscordAccount from "./discord-account";
 import ExternalLink from "./external-link";
 import NearAccount from "./near-account";
 import TwitterAccount from "./twitter-account";
+import config from "./config";
 import { DiscordUser } from "./discord";
 import { NearUser } from "./near";
 import { TwitterUser } from "./twitter";
@@ -25,7 +26,6 @@ const Nftdrop: FC = () => {
   );
   const [twitterError, setTwitterError] = useState<string | null>(null);
 
-  const dateThreshold = new Date("2022-02-15");
   const levelPercent = nearAccount
     ? (100 * nearAccount.creditToNextLevel) / nearAccount.requiredToNextLevel
     : 0;
@@ -214,14 +214,16 @@ const Nftdrop: FC = () => {
         </div>
         <div className="card-row">
           <div className="card-image">
-            {nearAccount?.createdAt || 0 > dateThreshold.valueOf() ? (
+            {nearAccount?.createdAt || 0 > config.dateThreshold.valueOf() ? (
               <Check />
             ) : (
               <Error />
             )}
           </div>
           <div className="card-content">
-            <h4>Account created before {dateThreshold.toLocaleString()}?</h4>
+            <h4>
+              Account created before {config.dateThreshold.toLocaleString()}?
+            </h4>
             {nearAccount && nearAccount?.createdAt.toLocaleString()}
           </div>
         </div>
@@ -293,14 +295,16 @@ const Nftdrop: FC = () => {
         <div className="card-row">
           <div className="card-image">
             {discordAccount?.createdAt.valueOf() ||
-            0 > dateThreshold.valueOf() ? (
+            0 > config.dateThreshold.valueOf() ? (
               <Check />
             ) : (
               <Error />
             )}
           </div>
           <div className="card-content">
-            <h4>Account created before {dateThreshold.toLocaleString()}?</h4>
+            <h4>
+              Account created before {config.dateThreshold.toLocaleString()}?
+            </h4>
             {discordAccount && discordAccount?.createdAt.toLocaleString()}
           </div>
         </div>
@@ -389,7 +393,9 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Retweeted{" "}
-              <ExternalLink href="https://twitter.com/shrm_kingdom/status/1468678836632133638">
+              <ExternalLink
+                href={`https://twitter.com/shrm_kingdom/status/${config.tweetId}`}
+              >
                 our Tweet
               </ExternalLink>{" "}
               with hashtags #NFT #PlayToEarn #BlockchainGaming #Airdrop
@@ -403,7 +409,9 @@ const Nftdrop: FC = () => {
           <div className="card-content">
             <h4>
               Liked{" "}
-              <ExternalLink href="https://twitter.com/shrm_kingdom/status/1468678836632133638">
+              <ExternalLink
+                href={`https://twitter.com/shrm_kingdom/status/${config.tweetId}`}
+              >
                 our Tweet
               </ExternalLink>
             </h4>

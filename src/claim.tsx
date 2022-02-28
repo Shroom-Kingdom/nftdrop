@@ -10,6 +10,7 @@ import { Contract, WalletConnection } from "near-api-js";
 
 import Button from "./button";
 import Nft from "./nft";
+import config from "./config";
 import { useDebounceCallback } from "./helper";
 import { SessionHeader, SessionStorageKey } from "./session";
 
@@ -61,17 +62,14 @@ const Claim: FC<{
 
   const fetchCheck = useDebounceCallback(
     async () => {
-      const res = await fetch(
-        "https://nftdrop.shrm.workers.dev/nftdrop/check",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            walletId,
-            discordOwnerId,
-            twitterOwnerId,
-          }),
-        }
-      );
+      const res = await fetch(`${config.baseApiUrl}/nftdrop/check`, {
+        method: "POST",
+        body: JSON.stringify({
+          walletId,
+          discordOwnerId,
+          twitterOwnerId,
+        }),
+      });
       if (!res.ok) {
         console.error(res.status, await res.text());
         return;
@@ -83,7 +81,7 @@ const Claim: FC<{
   );
 
   const infoCheck = useCallback(async () => {
-    const res = await fetch("https://nftdrop.shrm.workers.dev/nftdrop/info");
+    const res = await fetch(`${config.baseApiUrl}/nftdrop/info`);
     if (!res.ok) {
       console.error(res.status, await res.text());
       return;
@@ -143,17 +141,14 @@ const Claim: FC<{
         SessionStorageKey.Discord
       );
       if (!twitterSession || !discordSession || !canClaim) return;
-      const res = await fetch(
-        "https://nftdrop.shrm.workers.dev/nftdrop/claim",
-        {
-          method: "POST",
-          body: JSON.stringify({ walletId, nft }),
-          headers: {
-            [SessionHeader.Discord]: discordSession,
-            [SessionHeader.Twitter]: twitterSession,
-          },
-        }
-      );
+      const res = await fetch(`${config.baseApiUrl}/nftdrop/claim`, {
+        method: "POST",
+        body: JSON.stringify({ walletId, nft }),
+        headers: {
+          [SessionHeader.Discord]: discordSession,
+          [SessionHeader.Twitter]: twitterSession,
+        },
+      });
       if (!res.ok) {
         console.error(res.status, await res.text());
         return;

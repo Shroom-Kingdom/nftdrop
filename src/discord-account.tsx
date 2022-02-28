@@ -1,6 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 
 import DiscordSigninButton from "./discord-signin-button";
+import config from "./config";
 import { DiscordUser } from "./discord";
 import { removeQueryParams } from "./helper";
 import {
@@ -27,13 +28,10 @@ const DiscordAccount: FC<{
           const state = window.localStorage.getItem("DISCORD_STATE");
           const code = queryParams.get("code");
           if (code && state === queryParams.get("state")) {
-            const res = await fetch(
-              `https://nftdrop.shrm.workers.dev/discord/token`,
-              {
-                method: "POST",
-                body: JSON.stringify({ code }),
-              }
-            );
+            const res = await fetch(`${config.baseApiUrl}/discord/token`, {
+              method: "POST",
+              body: JSON.stringify({ code }),
+            });
             removeQueryParams();
             if (!res.ok) {
               console.error(await res.text());
@@ -47,15 +45,12 @@ const DiscordAccount: FC<{
           }
         }
         if (discordSession) {
-          const res = await fetch(
-            `https://nftdrop.shrm.workers.dev/discord/refresh`,
-            {
-              method: "POST",
-              headers: {
-                [SessionHeader.Discord]: discordSession,
-              },
-            }
-          );
+          const res = await fetch(`${config.baseApiUrl}/discord/refresh`, {
+            method: "POST",
+            headers: {
+              [SessionHeader.Discord]: discordSession,
+            },
+          });
           if (!res.ok) {
             signOut();
             console.error(await res.text());

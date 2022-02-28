@@ -2,6 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 import { WalletConnection, connect, keyStores } from "near-api-js";
 
 import NearSigninButton from "./near-signin-button";
+import config from "./config";
 import { NearUser } from "./near";
 
 const NearAccount: FC<{
@@ -13,7 +14,7 @@ const NearAccount: FC<{
   useEffect(() => {
     const run = async () => {
       if (process.browser) {
-        const config = {
+        const nearConfig = {
           networkId: "testnet",
           keyStore: new keyStores.BrowserLocalStorageKeyStore(),
           nodeUrl: "https://rpc.testnet.near.org",
@@ -23,7 +24,7 @@ const NearAccount: FC<{
           headers: {},
         };
 
-        const near = await connect(config);
+        const near = await connect(nearConfig);
         const wallet = new WalletConnection(near, null);
         setWallet(wallet);
 
@@ -32,9 +33,7 @@ const NearAccount: FC<{
           return;
         }
 
-        const res = await fetch(
-          `https://nftdrop.shrm.workers.dev/near/${walletId}`
-        );
+        const res = await fetch(`${config.baseApiUrl}/near/${walletId}`);
         if (!res.ok) {
           console.error(await res.text());
           return;
