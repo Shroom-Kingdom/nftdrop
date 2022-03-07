@@ -15,12 +15,12 @@ const NearAccount: FC<{
     const run = async () => {
       if (process.browser) {
         const nearConfig = {
-          networkId: "testnet",
+          networkId: config.networkId,
           keyStore: new keyStores.BrowserLocalStorageKeyStore(),
-          nodeUrl: "https://rpc.testnet.near.org",
-          walletUrl: "https://wallet.testnet.near.org",
-          helperUrl: "https://helper.testnet.near.org",
-          explorerUrl: "https://explorer.testnet.near.org",
+          nodeUrl: config.nodeUrl,
+          walletUrl: config.walletUrl,
+          helperUrl: config.helperUrl,
+          explorerUrl: config.explorerUrl,
           headers: {},
         };
 

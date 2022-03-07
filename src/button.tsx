@@ -2,12 +2,23 @@ import React, { FC, MouseEventHandler } from "react";
 
 const Button: FC<{
   disabled?: boolean;
+  loading?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-}> = ({ disabled, onClick, children }) => {
+}> = ({ disabled, loading, onClick, children }) => {
   return (
     <>
       <style jsx>{`
+        @keyframes rotate {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
         .button {
+          position: relative;
           color: #fff;
           text-shadow: none;
           box-shadow: 0 0 0 0 rgba(34, 36, 38, 0.15) inset;
@@ -39,10 +50,40 @@ const Button: FC<{
         .button:hover {
           background-color: ${disabled ? "grey" : "#2185d0"};
         }
+        .button-loading {
+          cursor: default;
+        }
+
+        .loading-wrapper {
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: flex;
+          width: 100%;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+        }
+        .loading {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          border: 7px solid transparent;
+          border-top-color: rgba(0, 0, 0, 0.6);
+          animation: rotate 800ms linear infinite;
+        }
       `}</style>
 
-      <button className={"button"} onClick={onClick}>
-        {children}
+      <button
+        className={`button ${loading ? "button-loading" : ""}`}
+        onClick={loading ? undefined : onClick}
+      >
+        {loading && (
+          <div className="loading-wrapper">
+            <div className="loading"></div>
+          </div>
+        )}
+        <div style={loading ? { visibility: "hidden" } : {}}>{children}</div>
       </button>
     </>
   );

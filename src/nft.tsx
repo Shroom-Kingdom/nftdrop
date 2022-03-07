@@ -11,7 +11,8 @@ const Nft: FC<{
     canClaim: boolean;
     unclaimed: number;
   };
-}> = ({ imgSrc, alt, claimOptions, children }) => (
+  loading?: boolean;
+}> = ({ imgSrc, alt, claimOptions, loading, children }) => (
   <>
     <style jsx>{`
       .nft-select {
@@ -34,6 +35,7 @@ const Nft: FC<{
           <Button
             disabled={!claimOptions.canClaim || claimOptions.unclaimed === 0}
             onClick={claimOptions.claim}
+            loading={loading}
           >
             {claimOptions.unclaimed ?? 0 > 0 ? "Claim now" : "All claimed"}
           </Button>

@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { WalletConnection } from "near-api-js";
 
 import Button from "./button";
+import config from "./config";
 import { NearUser } from "./near";
 
 const NearSigninButton: FC<{
@@ -13,10 +14,7 @@ const NearSigninButton: FC<{
     if (account) {
       signOut();
     } else {
-      wallet.requestSignIn(
-        "near-chan-v5.shrm.testnet",
-        "Shroom Kingdom NEARchan NFT"
-      );
+      wallet.requestSignIn(config.contractId, "Shroom Kingdom NEARchan NFT");
     }
   };
   return (

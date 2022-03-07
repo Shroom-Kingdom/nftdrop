@@ -59,6 +59,7 @@ const Claim: FC<{
   const [availableNfts, setAvailableNfts] = useState<AvailableNfts | null>(
     null
   );
+  const [loading, setLoading] = useState(false);
 
   const fetchCheck = useDebounceCallback(
     async () => {
@@ -100,70 +101,71 @@ const Claim: FC<{
 
   const transferNFT = useCallback(
     (tokenId: string, approvalId: number) => async () => {
-      console.log("transferNFT", tokenId, approvalId, walletId);
-      if (!wallet || !walletId) return;
-      const contract = new Contract(
-        wallet.account(),
-        "near-chan-v5.shrm.testnet",
-        {
+      try {
+        setLoading(true);
+        if (!wallet || !walletId) return;
+        const contract = new Contract(wallet.account(), config.contractId, {
           viewMethods: [],
           changeMethods: ["nft_transfer"],
-        }
-      );
-      console.log({
-        args: {
-          receiver_id: walletId,
-          token_id: tokenId,
-          approval_id: approvalId,
-        },
-        amount: "1",
-      });
-      // FIXME typings
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (contract as any).nft_transfer({
-        args: {
-          receiver_id: walletId,
-          token_id: tokenId,
-          approval_id: approvalId,
-        },
-        amount: "1",
-      });
+        });
+        // FIXME typings
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (contract as any).nft_transfer({
+          args: {
+            receiver_id: walletId,
+            token_id: tokenId,
+            approval_id: approvalId,
+          },
+          amount: "1",
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     },
     [wallet, walletId]
   );
 
   const claim = useCallback(
     (nft: NftType) => async () => {
-      const twitterSession = window.localStorage.getItem(
-        SessionStorageKey.Twitter
-      );
-      const discordSession = window.localStorage.getItem(
-        SessionStorageKey.Discord
-      );
-      if (!twitterSession || !discordSession || !canClaim) return;
-      const res = await fetch(`${config.baseApiUrl}/nftdrop/claim`, {
-        method: "POST",
-        body: JSON.stringify({ walletId, nft }),
-        headers: {
-          [SessionHeader.Discord]: discordSession,
-          [SessionHeader.Twitter]: twitterSession,
-        },
-      });
-      if (!res.ok) {
-        console.error(res.status, await res.text());
-        return;
+      try {
+        setLoading(true);
+        const twitterSession = window.localStorage.getItem(
+          SessionStorageKey.Twitter
+        );
+        const discordSession = window.localStorage.getItem(
+          SessionStorageKey.Discord
+        );
+        if (!twitterSession || !discordSession || !canClaim) return;
+        const res = await fetch(`${config.baseApiUrl}/nftdrop/claim`, {
+          method: "POST",
+          body: JSON.stringify({ walletId, nft }),
+          headers: {
+            [SessionHeader.Discord]: discordSession,
+            [SessionHeader.Twitter]: twitterSession,
+          },
+        });
+        if (!res.ok) {
+          console.error(res.status, await res.text());
+          return;
+        }
+
+        const {
+          tokenId,
+          approvalId,
+          imgSrc,
+        }: { tokenId: string; approvalId: number; imgSrc: string } =
+          await res.json();
+
+        await transferNFT(tokenId, approvalId)();
+
+        setClaimCheck({ ...claimCheck, tokenId, approvalId, imgSrc });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-
-      const {
-        tokenId,
-        approvalId,
-        imgSrc,
-      }: { tokenId: string; approvalId: number; imgSrc: string } =
-        await res.json();
-
-      await transferNFT(tokenId, approvalId)();
-
-      setClaimCheck({ ...claimCheck, tokenId, approvalId, imgSrc });
     },
     [canClaim, walletId, transferNFT, setClaimCheck, claimCheck]
   );
@@ -209,12 +211,19 @@ const Claim: FC<{
         {tokenId != null ? (
           <>
             <div className="nft-wrapper">
-              <Nft imgSrc={claimCheck?.imgSrc ?? ""} alt="near-chan-smw-big">
+              <Nft
+                imgSrc={claimCheck?.imgSrc ?? ""}
+                alt="near-chan-smw-big"
+                loading={loading}
+              >
                 <div>You claimed NFT with ID {tokenId}</div>
                 {approvalId != null && (
                   <>
                     <b>You have not yet transferred it to your wallet!</b>
-                    <Button onClick={transferNFT(tokenId, approvalId)}>
+                    <Button
+                      onClick={transferNFT(tokenId, approvalId)}
+                      loading={loading}
+                    >
                       Transfer
                     </Button>
                   </>
@@ -235,6 +244,7 @@ const Claim: FC<{
                     canClaim,
                     unclaimed: availableNfts[NftType.SmwBig],
                   }}
+                  loading={loading}
                 />
                 <Nft
                   imgSrc="/near-chan-smw-small.png"
@@ -244,6 +254,7 @@ const Claim: FC<{
                     canClaim,
                     unclaimed: availableNfts[NftType.SmwSmall],
                   }}
+                  loading={loading}
                 />
                 <Nft
                   imgSrc="/near-chan-smb3-big.png"
@@ -253,6 +264,7 @@ const Claim: FC<{
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb3Big],
                   }}
+                  loading={loading}
                 />
                 <Nft
                   imgSrc="/near-chan-smb3-small.png"
@@ -262,6 +274,7 @@ const Claim: FC<{
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb3Small],
                   }}
+                  loading={loading}
                 />
                 <Nft
                   imgSrc="/near-chan-smb1-big.png"
@@ -271,6 +284,7 @@ const Claim: FC<{
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb1Big],
                   }}
+                  loading={loading}
                 />
                 <Nft
                   imgSrc="/near-chan-smb1-small.png"
@@ -280,6 +294,7 @@ const Claim: FC<{
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb1Small],
                   }}
+                  loading={loading}
                 />
               </div>
             )}

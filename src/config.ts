@@ -4,6 +4,12 @@ const config = {
   redirectUri: process.env.REDIRECT_URI!,
   tweetId: process.env.TWEET_ID!,
   dateThreshold: new Date(process.env.DATE_THRESHOLD!),
+  contractId: process.env.CONTRACT_ID!,
+  networkId: process.env.NETWORK_ID!,
+  nodeUrl: process.env.NODE_URL!,
+  walletUrl: process.env.WALLET_URL!,
+  helperUrl: process.env.HELPER_URL!,
+  explorerUrl: process.env.EXPLORER_URL!,
 };
 
 function assertConfig(c: typeof config) {
