@@ -46,7 +46,7 @@ const Nft: FC<{
               ? claimOptions.unclaimed ?? 0 > 0
                 ? "Claim now"
                 : "All claimed"
-              : "Initializing"}
+              : "Initializing..."}
           </Button>
         </>
       )}
