@@ -492,6 +492,19 @@ const Nftdrop: FC = () => {
             </h4>
           </div>
         </div>
+        <div className="card-row">
+          <div className="card-image">
+            {twitterAccount?.isFollowingASAC ? <Check /> : <Error />}
+          </div>
+          <div className="card-content">
+            <h4>
+              Is following{" "}
+              <ExternalLink href="https://twitter.com/ASAC_NFT">
+                Antisocial Ape Club
+              </ExternalLink>
+            </h4>
+          </div>
+        </div>
       </div>
     </div>
   );

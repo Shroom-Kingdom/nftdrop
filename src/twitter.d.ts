@@ -8,6 +8,7 @@ export interface TwitterUser {
   isFollowingNEARProtocol: boolean;
   isFollowingNNC: boolean;
   isFollowingFSC: boolean;
+  isFollowingASAC: boolean;
   retweeted: boolean;
   liked: boolean;
 }
