@@ -10,6 +10,7 @@ const Nft: FC<{
     claim: MouseEventHandler<HTMLButtonElement>;
     canClaim: boolean;
     unclaimed: number;
+    scannedAllNfts: boolean;
   };
   loading?: boolean;
 }> = ({ imgSrc, alt, claimOptions, loading, children }) => (
@@ -33,11 +34,19 @@ const Nft: FC<{
             Remaining: {claimOptions.unclaimed}
           </div>
           <Button
-            disabled={!claimOptions.canClaim || claimOptions.unclaimed === 0}
+            disabled={
+              !claimOptions.canClaim ||
+              claimOptions.unclaimed === 0 ||
+              !claimOptions.scannedAllNfts
+            }
             onClick={claimOptions.claim}
             loading={loading}
           >
-            {claimOptions.unclaimed ?? 0 > 0 ? "Claim now" : "All claimed"}
+            {claimOptions.scannedAllNfts
+              ? claimOptions.unclaimed ?? 0 > 0
+                ? "Claim now"
+                : "All claimed"
+              : "Initializing"}
           </Button>
         </>
       )}

@@ -39,6 +39,7 @@ interface AvailableNfts {
   [NftType.Smb3Big]: number;
   [NftType.SmwSmall]: number;
   [NftType.SmwBig]: number;
+  scannedAllNfts: boolean;
 }
 
 const Claim: FC<{
@@ -175,7 +176,15 @@ const Claim: FC<{
   }, [fetchCheck]);
   useEffect(() => {
     infoCheck();
-  }, [infoCheck]);
+    const poll = () => {
+      setTimeout(async () => {
+        await infoCheck();
+        poll();
+      }, 10000);
+    };
+    poll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const tokenId = claimCheck?.tokenId;
   const approvalId = claimCheck?.approvalId;
@@ -243,6 +252,7 @@ const Claim: FC<{
                     claim: claim(NftType.SmwBig),
                     canClaim,
                     unclaimed: availableNfts[NftType.SmwBig],
+                    scannedAllNfts: availableNfts.scannedAllNfts,
                   }}
                   loading={loading}
                 />
@@ -253,6 +263,7 @@ const Claim: FC<{
                     claim: claim(NftType.SmwSmall),
                     canClaim,
                     unclaimed: availableNfts[NftType.SmwSmall],
+                    scannedAllNfts: availableNfts.scannedAllNfts,
                   }}
                   loading={loading}
                 />
@@ -263,6 +274,7 @@ const Claim: FC<{
                     claim: claim(NftType.Smb3Big),
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb3Big],
+                    scannedAllNfts: availableNfts.scannedAllNfts,
                   }}
                   loading={loading}
                 />
@@ -273,6 +285,7 @@ const Claim: FC<{
                     claim: claim(NftType.Smb3Small),
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb3Small],
+                    scannedAllNfts: availableNfts.scannedAllNfts,
                   }}
                   loading={loading}
                 />
@@ -283,6 +296,7 @@ const Claim: FC<{
                     claim: claim(NftType.Smb1Big),
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb1Big],
+                    scannedAllNfts: availableNfts.scannedAllNfts,
                   }}
                   loading={loading}
                 />
@@ -293,6 +307,7 @@ const Claim: FC<{
                     claim: claim(NftType.Smb1Small),
                     canClaim,
                     unclaimed: availableNfts[NftType.Smb1Small],
+                    scannedAllNfts: availableNfts.scannedAllNfts,
                   }}
                   loading={loading}
                 />
