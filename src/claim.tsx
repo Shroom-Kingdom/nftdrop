@@ -9,6 +9,7 @@ import React, {
 import { Contract, WalletConnection } from "near-api-js";
 
 import Button from "./button";
+import ExternalLink from "./external-link";
 import Nft from "./nft";
 import config from "./config";
 import { useDebounceCallback } from "./helper";
@@ -237,6 +238,13 @@ const Claim: FC<{
                     </Button>
                   </>
                 )}
+                <div>
+                  The collection is also listed on{" "}
+                  <ExternalLink href="https://paras.id/collection/near-chan.shrm.near">
+                    Paras
+                  </ExternalLink>{" "}
+                  where you can trade it.
+                </div>
               </Nft>
             </div>
           </>
