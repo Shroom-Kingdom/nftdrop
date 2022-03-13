@@ -220,8 +220,9 @@ const Nftdrop: FC = () => {
         </div>
         <div className="card-row">
           <div className="card-image">
-            {(nearAccount?.createdAt.valueOf() || 0) <
-            config.dateThreshold.valueOf() ? (
+            {nearAccount &&
+            (nearAccount?.createdAt.valueOf() || 0) <
+              config.dateThreshold.valueOf() ? (
               <Check />
             ) : (
               <Error />
@@ -301,8 +302,9 @@ const Nftdrop: FC = () => {
         </div>
         <div className="card-row">
           <div className="card-image">
-            {(discordAccount?.createdAt.valueOf() || 0) <
-            config.dateThreshold.valueOf() ? (
+            {discordAccount &&
+            (discordAccount?.createdAt.valueOf() || 0) <
+              config.dateThreshold.valueOf() ? (
               <Check />
             ) : (
               <Error />
