@@ -401,7 +401,8 @@ const Nftdrop: FC = () => {
               >
                 our Tweet
               </ExternalLink>{" "}
-              with hashtags #NFT #PlayToEarn #BlockchainGaming #Airdrop
+              with hashtags #NFT #PlayToEarn #BlockchainGaming #Airdrop (do not
+              use @mentions, because this breaks Twitter API)
             </h4>
           </div>
         </div>
