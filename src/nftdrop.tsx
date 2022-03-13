@@ -30,12 +30,6 @@ const Nftdrop: FC = () => {
     ? (100 * nearAccount.creditToNextLevel) / nearAccount.requiredToNextLevel
     : 0;
 
-  console.log(
-    "created",
-    nearAccount?.createdAt.valueOf(),
-    config.dateThreshold.valueOf()
-  );
-
   return (
     <div className="grid">
       <style jsx>{`
