@@ -30,6 +30,12 @@ const Nftdrop: FC = () => {
     ? (100 * nearAccount.creditToNextLevel) / nearAccount.requiredToNextLevel
     : 0;
 
+  console.log(
+    "created",
+    nearAccount?.createdAt.valueOf(),
+    config.dateThreshold.valueOf()
+  );
+
   return (
     <div className="grid">
       <style jsx>{`
@@ -214,7 +220,8 @@ const Nftdrop: FC = () => {
         </div>
         <div className="card-row">
           <div className="card-image">
-            {nearAccount?.createdAt.valueOf() || 0 > config.dateThreshold.valueOf() ? (
+            {(nearAccount?.createdAt.valueOf() || 0) <
+            config.dateThreshold.valueOf() ? (
               <Check />
             ) : (
               <Error />
@@ -294,8 +301,8 @@ const Nftdrop: FC = () => {
         </div>
         <div className="card-row">
           <div className="card-image">
-            {discordAccount?.createdAt.valueOf() ||
-            0 > config.dateThreshold.valueOf() ? (
+            {(discordAccount?.createdAt.valueOf() || 0) <
+            config.dateThreshold.valueOf() ? (
               <Check />
             ) : (
               <Error />
